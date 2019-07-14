@@ -1,7 +1,9 @@
 package api.services;
 
 import api.model.*;
-import api.model.strategies.CrossMovingAverageStrategy;
+import api.model.strategies.CrossMovingAverageBuyStrategy;
+import api.model.strategies.CrossMovingAverageSellStrategy;
+import api.model.strategies.Strategy;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -16,7 +18,7 @@ import java.util.stream.Collectors;
 
 public class StockService {
 
-    public List<OperationResult> getOperationResults(CrossMovingAverageStrategy strategy) throws IOException, ParseException {
+    public List<OperationResult> getOperationResults(Strategy strategy) throws IOException, ParseException {
         StockContext stockContext = run(strategy);
         return stockContext.operationResults;
     }
@@ -30,7 +32,7 @@ public class StockService {
 
     private List<Metric> getBestMetrics(List<Metric> metrics) {
         List<Metric> bestMetrics = metrics.stream().filter(it ->
-                ((double)it.wins/it.totalOperations)*100 > 70)
+                ((double) it.wins / it.totalOperations) * 100 > 70)
                 .collect(Collectors.toList());
 
         return bestMetrics;
@@ -41,8 +43,8 @@ public class StockService {
         List<Metric> metrics = new ArrayList<>();
         for (int slow = 7; slow < 150; slow++) {
             for (int fast = 2; fast < 100; fast++) {
-                if(slow>fast){ //quien dice que esto tiene que ser asi?...
-                    CrossMovingAverageStrategy strategy = new CrossMovingAverageStrategy(slow, fast);
+                if (slow > fast) { //quien dice que esto tiene que ser asi?...
+                    Strategy strategy = new Strategy(new CrossMovingAverageBuyStrategy(slow, fast), new CrossMovingAverageSellStrategy(slow, fast));
                     metrics.add(getMetrics(strategy));
                 }
 
@@ -52,23 +54,23 @@ public class StockService {
         return metrics;
     }
 
-    public Metric getMetrics(CrossMovingAverageStrategy strategy) throws IOException, ParseException {
+    public Metric getMetrics(Strategy strategy) throws IOException, ParseException {
         List<OperationResult> operationResults = getOperationResults(strategy);
         Integer wins = operationResults.stream().filter(it -> it.result.equals("win")).collect(Collectors.toList()).size();
         Integer loss = operationResults.stream().filter(it -> it.result.equals("loss")).collect(Collectors.toList()).size();
         Integer totalOperations = operationResults.size();
 
-        return new Metric("Cross" + strategy.fast.toString() + "-" + strategy.slow.toString(), wins, loss, totalOperations);
+        return new Metric("Cross" + strategy.toString(), wins, loss, totalOperations);
 
     }
 
     public List<DataStock> getStocks() throws IOException, ParseException {
-        CrossMovingAverageStrategy strategy = new CrossMovingAverageStrategy(20, 5);
+        Strategy strategy = new Strategy(new CrossMovingAverageBuyStrategy(20, 5), new CrossMovingAverageSellStrategy(20, 5));
         StockContext stockContext = run(strategy);
         return stockContext.dataStocks;
     }
 
-    private StockContext run(CrossMovingAverageStrategy strategy) throws IOException, ParseException {
+    private StockContext run(Strategy strategy) throws IOException, ParseException {
         String stockName = "ggal";
 
         StockContext stockContext = new StockContext(stockName, getHistoricalData(stockName));
@@ -79,7 +81,7 @@ public class StockService {
         return stockContext;
     }
 
-    private void runDay(StockContext stockContext, int day, CrossMovingAverageStrategy strategy) throws ParseException {
+    private void runDay(StockContext stockContext, int day, Strategy strategy) throws ParseException {
 
         updateDataContext(stockContext.dataStocks, stockContext, day, strategy);
 
@@ -90,11 +92,12 @@ public class StockService {
     }
 
 
-    private void updateDataContext(List<DataStock> dataStocks, StockContext stockContext, int i, CrossMovingAverageStrategy strategy) throws ParseException {
+    private void updateDataContext(List<DataStock> dataStocks, StockContext stockContext, int i, Strategy strategy) throws ParseException {
         DataStock actualDataStock = dataStocks.get(i);
         stockContext.actualDate = actualDataStock.date;
-        updateMovingAverage(stockContext, strategy.fast, actualDataStock);
-        updateMovingAverage(stockContext, strategy.slow, actualDataStock);
+        //horrible el casteo
+        updateMovingAverage(stockContext, ((CrossMovingAverageBuyStrategy) strategy.buyStrategy).fast, actualDataStock);
+        updateMovingAverage(stockContext, ((CrossMovingAverageBuyStrategy) strategy.buyStrategy).slow, actualDataStock);
 
     }
 
