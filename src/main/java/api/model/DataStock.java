@@ -6,7 +6,8 @@ public class DataStock {
     public String open;
     public String low;
     public String close;
-    public Double fiveMovingAverage;
+    public Double fiveMovingAverage; // deberia salir del context
+    public Double twentyMovingAverage;//deberia salir del context
 
     public DataStock(String date, String lastPrice, String open, String low, String close) {
         this.date = date;

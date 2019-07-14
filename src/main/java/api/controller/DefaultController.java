@@ -1,6 +1,7 @@
 package api.controller;
 
 import api.model.DataStock;
+import api.model.OperationResult;
 import api.services.StockService;
 import com.google.gson.Gson;
 import spark.Request;
@@ -18,6 +19,12 @@ public class DefaultController {
     public static Object getData(Request request, Response response) throws IOException, ParseException {
 
         List<DataStock> stocks = stockService.getStocks();
+        return gson.toJson(stocks);
+    }
+
+    public static Object getOperationResults(Request request, Response response) throws IOException, ParseException {
+
+        List<OperationResult> stocks = stockService.getOperationResults();
         return gson.toJson(stocks);
     }
 
