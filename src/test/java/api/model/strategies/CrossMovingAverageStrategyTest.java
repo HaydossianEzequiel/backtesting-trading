@@ -17,7 +17,7 @@ public class CrossMovingAverageStrategyTest {
         stockContext.movingAverage.put(20, 21d);
 
         Operation operation = crossMovingAverageStrategy.getOperation(stockContext);
-        Assert.assertTrue(operation.equals(Operation.BUY));
+        Assert.assertEquals(Operation.BUY, operation);
     }
 
     @Test
@@ -29,18 +29,18 @@ public class CrossMovingAverageStrategyTest {
         stockContext.positionPrice = 50d;
 
         Operation operation = crossMovingAverageStrategy.getOperation(stockContext);
-        Assert.assertTrue(operation.equals(Operation.SELL));
+        Assert.assertEquals(Operation.SELL, operation);
     }
 
     @Test
-    public void testGetOperation_skip()  {
+    public void testGetOperation_skipWithoutData()  {
         CrossMovingAverageStrategy crossMovingAverageStrategy = new CrossMovingAverageStrategy(5, 20);
         StockContext stockContext = new StockContext("ggal", new ArrayList<>());
         stockContext.movingAverage.put(5, 23d);
         stockContext.movingAverage.put(20, 21d);
 
         Operation operation = crossMovingAverageStrategy.getOperation(stockContext);
-        Assert.assertTrue(operation.equals(Operation.SKIP));
+        Assert.assertEquals(Operation.SKIP, operation);
     }
 
 }

@@ -93,8 +93,6 @@ public class StockService {
     private void updateDataContext(List<DataStock> dataStocks, StockContext stockContext, int i, CrossMovingAverageStrategy strategy) throws ParseException {
         DataStock actualDataStock = dataStocks.get(i);
         stockContext.actualDate = actualDataStock.date;
-        //updateFiveMovingAverage(stockContext, actualDataStock);
-        //updateTwentyMovingAverage(stockContext, actualDataStock);
         updateMovingAverage(stockContext, strategy.fast, actualDataStock);
         updateMovingAverage(stockContext, strategy.slow, actualDataStock);
 
