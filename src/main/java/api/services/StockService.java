@@ -1,9 +1,6 @@
 package api.services;
 
-import api.model.DataStock;
-import api.model.Operation;
-import api.model.OperationResult;
-import api.model.StockContext;
+import api.model.*;
 import api.model.strategies.CrossMovingAverageStrategy;
 import api.model.strategies.Strategy;
 
@@ -15,6 +12,7 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class StockService {
@@ -22,6 +20,17 @@ public class StockService {
     public List<OperationResult> getOperationResults() throws IOException, ParseException {
         StockContext stockContext = run();
         return stockContext.operationResults;
+    }
+
+    public List<Metric> getMetrics() throws IOException, ParseException {
+        List<OperationResult> operationResults = getOperationResults();
+        Integer wins = operationResults.stream().filter(it-> it.result.equals("win")).collect(Collectors.toList()).size();
+        Integer loss = operationResults.stream().filter(it-> it.result.equals("loss")).collect(Collectors.toList()).size();
+        Integer totalOperations = operationResults.size();
+        List<Metric> metrics = new ArrayList<>();
+        metrics.add(new Metric("Cross", wins, loss, totalOperations));
+        return metrics;
+
     }
 
     public List<DataStock> getStocks() throws IOException, ParseException {

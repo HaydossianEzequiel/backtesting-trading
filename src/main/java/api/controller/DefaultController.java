@@ -1,6 +1,7 @@
 package api.controller;
 
 import api.model.DataStock;
+import api.model.Metric;
 import api.model.OperationResult;
 import api.services.StockService;
 import com.google.gson.Gson;
@@ -26,6 +27,12 @@ public class DefaultController {
 
         List<OperationResult> stocks = stockService.getOperationResults();
         return gson.toJson(stocks);
+    }
+
+    public static Object getMetrics(Request request, Response response) throws IOException, ParseException {
+
+        List<Metric> metrics = stockService.getMetrics();
+        return gson.toJson(metrics);
     }
 
 }

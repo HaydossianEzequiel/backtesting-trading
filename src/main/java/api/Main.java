@@ -10,6 +10,7 @@ public class Main {
         port(8080);
         get("/", DefaultController::getData);
         get("/result", DefaultController::getOperationResults);
+        get("/metrics", DefaultController::getMetrics);
 
     }
 
