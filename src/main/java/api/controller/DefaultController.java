@@ -3,6 +3,7 @@ package api.controller;
 import api.model.DataStock;
 import api.model.Metric;
 import api.model.OperationResult;
+import api.model.strategies.CrossMovingAverageStrategy;
 import api.services.StockService;
 import com.google.gson.Gson;
 import spark.Request;
@@ -24,14 +25,18 @@ public class DefaultController {
     }
 
     public static Object getOperationResults(Request request, Response response) throws IOException, ParseException {
-
-        List<OperationResult> stocks = stockService.getOperationResults();
+        Integer slow = Integer.valueOf(request.queryParams("slow"));
+        Integer fast = Integer.valueOf(request.queryParams("fast"));
+        CrossMovingAverageStrategy strategy = new CrossMovingAverageStrategy(slow, fast);
+        List<OperationResult> stocks = stockService.getOperationResults(strategy);
         return gson.toJson(stocks);
     }
 
     public static Object getMetrics(Request request, Response response) throws IOException, ParseException {
-
-        List<Metric> metrics = stockService.getMetrics();
+        Integer slow = Integer.valueOf(request.queryParams("slow"));
+        Integer fast = Integer.valueOf(request.queryParams("fast"));
+        CrossMovingAverageStrategy strategy = new CrossMovingAverageStrategy(slow, fast);
+        List<Metric> metrics = stockService.getMetrics(strategy);
         return gson.toJson(metrics);
     }
 

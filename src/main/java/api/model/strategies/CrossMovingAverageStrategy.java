@@ -5,6 +5,13 @@ import api.model.StockContext;
 
 public class CrossMovingAverageStrategy implements Strategy {
 
+    public final Integer slow;
+    public final Integer fast;
+
+    public CrossMovingAverageStrategy(Integer slow, Integer fast){
+        this.slow = slow;
+        this.fast = fast;
+    }
 
     @Override
     public Operation getOperation(StockContext stockContext) {
@@ -35,18 +42,18 @@ public class CrossMovingAverageStrategy implements Strategy {
         if (stockContext.positionPrice == null) {
             return false;
         }
-        return stockContext.movingAverage.get(5) < stockContext.movingAverage.get(20);
+        return stockContext.movingAverage.get(fast) < stockContext.movingAverage.get(slow);
     }
 
     private boolean shouldBuy(StockContext stockContext) {
         if (stockContext.positionPrice != null) {
             return false;
         }
-        return stockContext.movingAverage.get(5) > stockContext.movingAverage.get(20);
+        return stockContext.movingAverage.get(fast) > stockContext.movingAverage.get(slow);
     }
 
 
     private boolean hasData(StockContext stockContext) {
-        return stockContext.movingAverage.containsKey(5)&& stockContext.movingAverage.containsKey(20);
+        return stockContext.movingAverage.containsKey(fast)&& stockContext.movingAverage.containsKey(slow);
     }
 }
