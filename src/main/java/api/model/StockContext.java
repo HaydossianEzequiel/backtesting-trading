@@ -45,10 +45,20 @@ public class StockContext {
 
     private void updateSell(Double actualPrice) {
         OperationResult operationResult = new OperationResult();
-        if (positionPrice > actualPrice) {
+        operationResult.initialPrice = positionPrice;
+        operationResult.finalPrice = actualPrice;
+        if (positionPrice < actualPrice) {
             operationResult.result = "win";
         } else {
             operationResult.result = "loss";
+        }
+
+        operationResult.movement = ((double) actualPrice / positionPrice * 100) - 100;
+        if(operationResult.movement > 0 && operationResult.result.equals("loss")){
+            throw new RuntimeException("update sell invalid operation result");
+        }
+        if(operationResult.movement < 0 && operationResult.result.equals("win")){
+            throw new RuntimeException("update sell invalid operation result");
         }
         positionPrice = null;
 
