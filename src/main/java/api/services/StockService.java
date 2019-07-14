@@ -78,7 +78,14 @@ public class StockService {
         for (int day = 0; day < stockContext.dataStocks.size(); day++) {
             runDay(stockContext, day, strategy);
         }
+
+        closeAllPositions(stockContext, stockContext.dataStocks.size() - 1);
+
         return stockContext;
+    }
+
+    private void closeAllPositions(StockContext stockContext, Integer finalDay) throws ParseException {
+        stockContext.update(Operation.SELL, DecimalFormat.getNumberInstance().parse(stockContext.dataStocks.get(finalDay).close).doubleValue());
     }
 
     private void runDay(StockContext stockContext, int day, Strategy strategy) throws ParseException {
@@ -95,6 +102,7 @@ public class StockService {
     private void updateDataContext(List<DataStock> dataStocks, StockContext stockContext, int i, Strategy strategy) throws ParseException {
         DataStock actualDataStock = dataStocks.get(i);
         stockContext.actualDate = actualDataStock.date;
+        stockContext.actualPrice = DecimalFormat.getNumberInstance().parse(actualDataStock.close).doubleValue();
         //horrible el casteo
         updateMovingAverage(stockContext, ((CrossMovingAverageBuyStrategy) strategy.buyStrategy).fast, actualDataStock);
         updateMovingAverage(stockContext, ((CrossMovingAverageBuyStrategy) strategy.buyStrategy).slow, actualDataStock);

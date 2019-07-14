@@ -22,13 +22,13 @@ public class CrossMovingAverageSellStrategy implements SellStrategy {
 
     @Override
     public boolean hasData(StockContext stockContext) {
-        return stockContext.movingAverage.containsKey(fast)&& stockContext.movingAverage.containsKey(slow);
+        return stockContext.movingAverage.containsKey(fast) && stockContext.movingAverage.containsKey(slow);
     }
 
 
     @Override
     public String toString() {
-        return "CrossMovingAverageSellStrategy" + slow.toString() + "_" + fast.toString();
+        return getClass().getName() + slow.toString() + "_" + fast.toString();
     }
 
 }

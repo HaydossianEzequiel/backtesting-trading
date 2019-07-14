@@ -4,7 +4,7 @@ import api.model.DataStock;
 import api.model.Metric;
 import api.model.OperationResult;
 import api.model.strategies.CrossMovingAverageBuyStrategy;
-import api.model.strategies.CrossMovingAverageSellStrategy;
+import api.model.strategies.FixedStopLossAndProfitTargetSellStrategy;
 import api.model.strategies.Strategy;
 import api.services.StockService;
 import com.google.gson.Gson;
@@ -29,7 +29,7 @@ public class DefaultController {
     public static Object getOperationResults(Request request, Response response) throws IOException, ParseException {
         Integer slow = Integer.valueOf(request.queryParams("slow"));
         Integer fast = Integer.valueOf(request.queryParams("fast"));
-        Strategy strategy = new Strategy(new CrossMovingAverageBuyStrategy(slow, fast), new CrossMovingAverageSellStrategy(slow, fast));
+        Strategy strategy = new Strategy(new CrossMovingAverageBuyStrategy(slow, fast), new FixedStopLossAndProfitTargetSellStrategy(4, 10));
         List<OperationResult> stocks = stockService.getOperationResults(strategy);
         return gson.toJson(stocks);
     }
@@ -37,7 +37,7 @@ public class DefaultController {
     public static Object getMetrics(Request request, Response response) throws IOException, ParseException {
         Integer slow = Integer.valueOf(request.queryParams("slow"));
         Integer fast = Integer.valueOf(request.queryParams("fast"));
-        Strategy strategy = new Strategy(new CrossMovingAverageBuyStrategy(slow, fast), new CrossMovingAverageSellStrategy(slow, fast));
+        Strategy strategy = new Strategy(new CrossMovingAverageBuyStrategy(slow, fast), new FixedStopLossAndProfitTargetSellStrategy(4, 10));
         Metric metric = stockService.getMetrics(strategy);
         return gson.toJson(metric);
     }

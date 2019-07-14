@@ -54,7 +54,7 @@ public class StockServiceTest {
         dataStock = new DataStock("01-08-2000", null, null, null, "13");
         stockService.updateMovingAverage(stockContext, 5, dataStock);
 
-        Assert.assertNull(stockContext.movingAverage);
+        Assert.assertTrue(stockContext.movingAverage.isEmpty());
     }
 
 

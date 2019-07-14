@@ -13,6 +13,7 @@ public class StockContext {
     public Map<Integer, Double> movingAverage = new HashMap<>();
 
     public String actualDate;
+    public Double actualPrice; //El precio del dia de la fecha
     public Map<Integer, List<Double>> lastPricesMovingAverage = new HashMap<>();
 
     public List<OperationResult> operationResults = new ArrayList<>();
@@ -20,7 +21,7 @@ public class StockContext {
 
     public Double positionPrice; // para identificar si actualmente estoy comprado
     public String positionDay; // para identificar si actualmente estoy comprado
-    public Double actualPrice; //El precio del dia de la fecha
+
 
 
     public StockContext(String stockName, List<DataStock> historicalData) {

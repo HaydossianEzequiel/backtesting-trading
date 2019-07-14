@@ -27,7 +27,7 @@ public class CrossMovingAverageBuyStrategy implements BuyStrategy {
 
     @Override
     public String toString() {
-        return "CrossMovingAverageBuyStrategy_" + slow.toString() + "_" + fast.toString();
+        return getClass().getName() + slow.toString() + "_" + fast.toString();
     }
 
 
