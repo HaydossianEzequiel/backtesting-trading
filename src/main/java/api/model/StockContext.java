@@ -10,14 +10,9 @@ import java.util.Map;
 public class StockContext {
 
     public String stockName;
-    public Double fiveMovingAverage;
-    public Double twentyMovingAverage;
     public Map<Integer, Double> movingAverage = new HashMap<>();
 
     public String actualDate;
-    public List<Double> lastPricesFiveMovingAverage = new ArrayList<>();
-    public List<Double> lastPricesTwentyMovingAverage = new ArrayList<>();
-
     public Map<Integer, List<Double>> lastPricesMovingAverage = new HashMap<>();
 
     public List<OperationResult> operationResults = new ArrayList<>();

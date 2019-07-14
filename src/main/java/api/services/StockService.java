@@ -101,7 +101,7 @@ public class StockService {
     }
 
 
-    private void updateMovingAverage(StockContext stockContext, Integer average, DataStock actualDataStock) throws ParseException {
+    public void updateMovingAverage(StockContext stockContext, Integer average, DataStock actualDataStock) throws ParseException {
         if (!stockContext.lastPricesMovingAverage.containsKey(average)) {
             stockContext.lastPricesMovingAverage.put(average, new ArrayList<>());
         }
