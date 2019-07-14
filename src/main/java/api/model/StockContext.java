@@ -20,6 +20,7 @@ public class StockContext {
 
     public Double positionPrice; // para identificar si actualmente estoy comprado
     public String positionDay; // para identificar si actualmente estoy comprado
+    public Double actualPrice; //El precio del dia de la fecha
 
 
     public StockContext(String stockName, List<DataStock> historicalData) {
