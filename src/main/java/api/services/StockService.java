@@ -2,7 +2,6 @@ package api.services;
 
 import api.model.*;
 import api.model.strategies.CrossMovingAverageStrategy;
-import api.model.strategies.Strategy;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -22,14 +21,44 @@ public class StockService {
         return stockContext.operationResults;
     }
 
-    public List<Metric> getMetrics(CrossMovingAverageStrategy strategy) throws IOException, ParseException {
+    public List<Metric> getBestMovingAverageMetrics() throws IOException, ParseException {
+        List<Metric> metrics = getMovingAverageMetrics();
+        List<Metric> bestMetrics = getBestMetrics(metrics);
+
+        return bestMetrics;
+    }
+
+    private List<Metric> getBestMetrics(List<Metric> metrics) {
+        List<Metric> bestMetrics = metrics.stream().filter(it ->
+                ((double)it.wins/it.totalOperations)*100 > 70)
+                .collect(Collectors.toList());
+
+        return bestMetrics;
+    }
+
+
+    public List<Metric> getMovingAverageMetrics() throws IOException, ParseException {
+        List<Metric> metrics = new ArrayList<>();
+        for (int slow = 7; slow < 150; slow++) {
+            for (int fast = 2; fast < 100; fast++) {
+                if(slow>fast){ //quien dice que esto tiene que ser asi?...
+                    CrossMovingAverageStrategy strategy = new CrossMovingAverageStrategy(slow, fast);
+                    metrics.add(getMetrics(strategy));
+                }
+
+            }
+
+        }
+        return metrics;
+    }
+
+    public Metric getMetrics(CrossMovingAverageStrategy strategy) throws IOException, ParseException {
         List<OperationResult> operationResults = getOperationResults(strategy);
         Integer wins = operationResults.stream().filter(it -> it.result.equals("win")).collect(Collectors.toList()).size();
         Integer loss = operationResults.stream().filter(it -> it.result.equals("loss")).collect(Collectors.toList()).size();
         Integer totalOperations = operationResults.size();
-        List<Metric> metrics = new ArrayList<>();
-        metrics.add(new Metric("Cross", wins, loss, totalOperations));
-        return metrics;
+
+        return new Metric("Cross" + strategy.fast.toString() + "-" + strategy.slow.toString(), wins, loss, totalOperations);
 
     }
 

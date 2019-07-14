@@ -11,6 +11,7 @@ public class Main {
         get("/", DefaultController::getData);
         get("/result", DefaultController::getOperationResults);
         get("/metrics", DefaultController::getMetrics);
+        get("/moving_average_metrics", DefaultController::getMovingAverageMetrics);
 
     }
 

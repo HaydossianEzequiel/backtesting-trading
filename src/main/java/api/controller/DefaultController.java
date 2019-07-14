@@ -11,6 +11,7 @@ import spark.Response;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class DefaultController {
@@ -36,7 +37,13 @@ public class DefaultController {
         Integer slow = Integer.valueOf(request.queryParams("slow"));
         Integer fast = Integer.valueOf(request.queryParams("fast"));
         CrossMovingAverageStrategy strategy = new CrossMovingAverageStrategy(slow, fast);
-        List<Metric> metrics = stockService.getMetrics(strategy);
+        Metric metric = stockService.getMetrics(strategy);
+        return gson.toJson(metric);
+    }
+
+    public static Object getMovingAverageMetrics(Request request, Response response) throws IOException, ParseException {
+
+        List<Metric> metrics = stockService.getBestMovingAverageMetrics();
         return gson.toJson(metrics);
     }
 
