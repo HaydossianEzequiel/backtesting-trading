@@ -35,18 +35,18 @@ public class CrossMovingAverageStrategy implements Strategy {
         if (stockContext.positionPrice == null) {
             return false;
         }
-        return stockContext.fiveMovingAverage < stockContext.twentyMovingAverage;
+        return stockContext.movingAverage.get(5) < stockContext.movingAverage.get(20);
     }
 
     private boolean shouldBuy(StockContext stockContext) {
         if (stockContext.positionPrice != null) {
             return false;
         }
-        return stockContext.fiveMovingAverage > stockContext.twentyMovingAverage;
+        return stockContext.movingAverage.get(5) > stockContext.movingAverage.get(20);
     }
 
 
     private boolean hasData(StockContext stockContext) {
-        return stockContext.fiveMovingAverage != null && stockContext.twentyMovingAverage != null;
+        return stockContext.movingAverage.containsKey(5)&& stockContext.movingAverage.containsKey(20);
     }
 }

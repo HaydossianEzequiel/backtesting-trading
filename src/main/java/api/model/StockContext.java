@@ -3,16 +3,23 @@ package api.model;
 import com.google.common.collect.Lists;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class StockContext {
 
     public String stockName;
     public Double fiveMovingAverage;
     public Double twentyMovingAverage;
+    public Map<Integer, Double> movingAverage = new HashMap<>();
+
     public String actualDate;
     public List<Double> lastPricesFiveMovingAverage = new ArrayList<>();
     public List<Double> lastPricesTwentyMovingAverage = new ArrayList<>();
+
+    public Map<Integer, List<Double>> lastPricesMovingAverage = new HashMap<>();
+
     public List<OperationResult> operationResults = new ArrayList<>();
     public List<DataStock> dataStocks;
 

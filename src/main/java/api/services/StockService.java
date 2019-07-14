@@ -24,8 +24,8 @@ public class StockService {
 
     public List<Metric> getMetrics() throws IOException, ParseException {
         List<OperationResult> operationResults = getOperationResults();
-        Integer wins = operationResults.stream().filter(it-> it.result.equals("win")).collect(Collectors.toList()).size();
-        Integer loss = operationResults.stream().filter(it-> it.result.equals("loss")).collect(Collectors.toList()).size();
+        Integer wins = operationResults.stream().filter(it -> it.result.equals("win")).collect(Collectors.toList()).size();
+        Integer loss = operationResults.stream().filter(it -> it.result.equals("loss")).collect(Collectors.toList()).size();
         Integer totalOperations = operationResults.size();
         List<Metric> metrics = new ArrayList<>();
         metrics.add(new Metric("Cross", wins, loss, totalOperations));
@@ -62,33 +62,29 @@ public class StockService {
     private void updateDataContext(List<DataStock> dataStocks, StockContext stockContext, int i) throws ParseException {
         DataStock actualDataStock = dataStocks.get(i);
         stockContext.actualDate = actualDataStock.date;
-        updateFiveMovingAverage(stockContext, actualDataStock);
-        updateTwentyMovingAverage(stockContext, actualDataStock);
+        //updateFiveMovingAverage(stockContext, actualDataStock);
+        //updateTwentyMovingAverage(stockContext, actualDataStock);
+        updateMovingAverage(stockContext, 5, actualDataStock);
+        updateMovingAverage(stockContext, 20, actualDataStock);
 
     }
 
-    private void updateTwentyMovingAverage(StockContext stockContext, DataStock actualDataStock) throws ParseException {
 
-        if (stockContext.lastPricesTwentyMovingAverage.size() >= 20) {
-            stockContext.lastPricesTwentyMovingAverage.remove(0);
-            stockContext.lastPricesTwentyMovingAverage.add(DecimalFormat.getNumberInstance().parse(actualDataStock.close).doubleValue());
-            stockContext.twentyMovingAverage = stockContext.lastPricesTwentyMovingAverage.stream().mapToDouble(a -> a).average().getAsDouble();
-            actualDataStock.twentyMovingAverage = stockContext.twentyMovingAverage;
-
-        } else {
-            stockContext.lastPricesTwentyMovingAverage.add(DecimalFormat.getNumberInstance().parse(actualDataStock.close).doubleValue());
+    private void updateMovingAverage(StockContext stockContext, Integer average, DataStock actualDataStock) throws ParseException {
+        if (!stockContext.lastPricesMovingAverage.containsKey(average)) {
+            stockContext.lastPricesMovingAverage.put(average, new ArrayList<>());
         }
-    }
 
-    private void updateFiveMovingAverage(StockContext stockContext, DataStock actualDataStock) throws ParseException {
-        if (stockContext.lastPricesFiveMovingAverage.size() >= 5) {
-            stockContext.lastPricesFiveMovingAverage.remove(0);
-            stockContext.lastPricesFiveMovingAverage.add(DecimalFormat.getNumberInstance().parse(actualDataStock.close).doubleValue());
-            stockContext.fiveMovingAverage = stockContext.lastPricesFiveMovingAverage.stream().mapToDouble(a -> a).average().getAsDouble();
-            actualDataStock.fiveMovingAverage = stockContext.fiveMovingAverage;
+        if (stockContext.lastPricesMovingAverage.get(average).size() >= average) {
+            stockContext.lastPricesMovingAverage.get(average).remove(0);
+            stockContext.lastPricesMovingAverage.get(average).add(DecimalFormat.getNumberInstance().parse(actualDataStock.close).doubleValue());
+
+            stockContext.movingAverage.put(average, stockContext.lastPricesMovingAverage.get(average).stream().mapToDouble(a -> a).average().getAsDouble());
+            actualDataStock.movingAverage.put(average, stockContext.movingAverage.get(average));
+
 
         } else {
-            stockContext.lastPricesFiveMovingAverage.add(DecimalFormat.getNumberInstance().parse(actualDataStock.close).doubleValue());
+            stockContext.lastPricesMovingAverage.get(average).add(DecimalFormat.getNumberInstance().parse(actualDataStock.close).doubleValue());
         }
     }
 
