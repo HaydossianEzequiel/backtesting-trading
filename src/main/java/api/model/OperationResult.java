@@ -7,4 +7,8 @@ public class OperationResult {
     public Double movement;
     public Double initialPrice;
     public Double finalPrice;
+
+    public Double getMovement() {
+        return this.movement;
+    }
 }

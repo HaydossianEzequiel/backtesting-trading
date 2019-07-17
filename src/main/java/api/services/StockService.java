@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -56,11 +57,18 @@ public class StockService {
 
     public Metric getMetrics(Strategy strategy) throws IOException, ParseException {
         List<OperationResult> operationResults = getOperationResults(strategy);
-        Integer wins = operationResults.stream().filter(it -> it.result.equals("win")).collect(Collectors.toList()).size();
-        Integer loss = operationResults.stream().filter(it -> it.result.equals("loss")).collect(Collectors.toList()).size();
-        Integer totalOperations = operationResults.size();
 
-        return new Metric("Cross" + strategy.toString(), wins, loss, totalOperations);
+        Metric metric = new Metric();
+        metric.strategyName = strategy.toString();
+        metric.wins = operationResults.stream().filter(it -> it.result.equals("win")).collect(Collectors.toList()).size();
+        metric.loss = operationResults.stream().filter(it -> it.result.equals("loss")).collect(Collectors.toList()).size();
+        metric.totalOperations = operationResults.size();
+        List<OperationResult> sortedOperations = operationResults.stream().sorted(Comparator.comparingDouble(OperationResult::getMovement)).collect(Collectors.toList());
+        metric.worstMovement = sortedOperations.get(0);
+        metric.bestMovement = sortedOperations.get(operationResults.size() - 1);
+
+
+        return metric;
 
     }
 
@@ -136,7 +144,7 @@ public class StockService {
 
         while ((line = br.readLine()) != null) {
             String str[] = line.split("@");
-            dataStocks.add(new DataStock(str[0], str[1], str[2], str[3], str[4]));
+            dataStocks.add(new DataStock(str[0], str[1]));
         }
         return dataStocks;
     }

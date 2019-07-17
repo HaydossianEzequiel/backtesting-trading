@@ -21,12 +21,15 @@ public class StockContext {
 
     public Double positionPrice; // para identificar si actualmente estoy comprado
     public String positionDay; // para identificar si actualmente estoy comprado
-
+    public Double stopPrice;
+    public Double profitTargetPrice;
 
 
     public StockContext(String stockName, List<DataStock> historicalData) {
         this.stockName = stockName;
         dataStocks = Lists.reverse(historicalData);
+        stopPrice = 0d;
+        profitTargetPrice = 0d;
     }
 
 
@@ -56,10 +59,10 @@ public class StockContext {
         }
 
         operationResult.movement = ((double) actualPrice / positionPrice * 100) - 100;
-        if(operationResult.movement > 0 && operationResult.result.equals("loss")){
+        if (operationResult.movement > 0 && operationResult.result.equals("loss")) {
             throw new RuntimeException("update sell invalid operation result");
         }
-        if(operationResult.movement < 0 && operationResult.result.equals("win")){
+        if (operationResult.movement < 0 && operationResult.result.equals("win")) {
             throw new RuntimeException("update sell invalid operation result");
         }
         positionPrice = null;
@@ -70,5 +73,8 @@ public class StockContext {
 
         operationResult.sellDate = actualDate;
         operationResults.add(operationResult);
+
+        stopPrice = 0d;
+        profitTargetPrice = 0d;
     }
 }
