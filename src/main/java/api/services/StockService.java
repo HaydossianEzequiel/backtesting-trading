@@ -3,6 +3,7 @@ package api.services;
 import api.model.*;
 import api.model.strategies.CrossMovingAverageBuyStrategy;
 import api.model.strategies.CrossMovingAverageSellStrategy;
+import api.model.strategies.MovingAverageBuyStrategy;
 import api.model.strategies.Strategy;
 
 import java.io.BufferedReader;
@@ -66,9 +67,19 @@ public class StockService {
         List<OperationResult> sortedOperations = operationResults.stream().sorted(Comparator.comparingDouble(OperationResult::getMovement)).collect(Collectors.toList());
         metric.worstMovement = sortedOperations.get(0);
         metric.bestMovement = sortedOperations.get(operationResults.size() - 1);
+        metric.globalResult = getGlobalResult(operationResults);
 
 
         return metric;
+
+    }
+
+    private Double getGlobalResult(List<OperationResult> operationResults) {
+        Double cash = 1000d;
+        for (int i = 0; i < operationResults.size(); i++) {
+            cash = cash * (1 + ((operationResults.get(i).movement / 100)));
+        }
+        return cash;
 
     }
 
@@ -112,8 +123,15 @@ public class StockService {
         stockContext.actualDate = actualDataStock.date;
         stockContext.actualPrice = DecimalFormat.getNumberInstance().parse(actualDataStock.close).doubleValue();
         //horrible el casteo
-        updateMovingAverage(stockContext, ((CrossMovingAverageBuyStrategy) strategy.buyStrategy).fast, actualDataStock);
-        updateMovingAverage(stockContext, ((CrossMovingAverageBuyStrategy) strategy.buyStrategy).slow, actualDataStock);
+        if (strategy.buyStrategy instanceof CrossMovingAverageBuyStrategy) {
+            updateMovingAverage(stockContext, ((CrossMovingAverageBuyStrategy) strategy.buyStrategy).fast, actualDataStock);
+            updateMovingAverage(stockContext, ((CrossMovingAverageBuyStrategy) strategy.buyStrategy).slow, actualDataStock);
+        }
+
+        if (strategy.buyStrategy instanceof MovingAverageBuyStrategy) {
+            updateMovingAverage(stockContext, ((MovingAverageBuyStrategy) strategy.buyStrategy).average, actualDataStock);
+        }
+
 
     }
 

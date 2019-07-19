@@ -31,14 +31,17 @@ public class TrailingStopSellStrategy implements SellStrategy {
     }
 
     public boolean shouldSell(StockContext stockContext) {
+        if (!hasData(stockContext)) {
+            return false;
+        }
         if (stockContext.stopPrice == 0) {
             stockContext.stopPrice = stockContext.positionPrice * ((double) (100 - initialStopPercentage) / 100);
             stockContext.profitTargetPrice = stockContext.positionPrice * ((double) (100 + profitTargetPercentage) / 100);
         }
         //Esto no deberia ser parte del shouldSell. Seria un updateData que se ejecute genericamente en el abstract
         if (breakProfitTarget(stockContext)) {
-            updateStopPrice(stockContext);
             updateProfitTargetPrice(stockContext);
+            updateStopPrice(stockContext);
             if (stockContext.stopPrice > stockContext.profitTargetPrice) {
                 throw new RuntimeException("stop price can not be grater than target price");
             }
@@ -50,8 +53,11 @@ public class TrailingStopSellStrategy implements SellStrategy {
         stockContext.profitTargetPrice = stockContext.profitTargetPrice * (1 + (double) (profitTargetPercentage) / 100);
     }
 
-    public void updateStopPrice(StockContext stockContext) {
+    public void updateStopPrice(StockContext stockContext) {//pelotudo estas cosas testealas
         stockContext.stopPrice = stockContext.stopPrice * (1 + (double) (upperCachePercentage) / 100);
+        if ((double) stockContext.stopPrice / stockContext.profitTargetPrice < 0.3) {
+            stockContext.stopPrice = stockContext.profitTargetPrice * 0.6;
+        }
     }
 
     private boolean breakProfitTarget(StockContext stockContext) {

@@ -49,6 +49,16 @@ public class StockContext {
     }
 
     private void updateSell(Double actualPrice) {
+        updateOperationResult(actualPrice);
+
+        positionPrice = null;
+        positionDay = null;
+        stopPrice = 0d;
+        profitTargetPrice = 0d;
+
+    }
+
+    private void updateOperationResult(Double actualPrice) {
         OperationResult operationResult = new OperationResult();
         operationResult.initialPrice = positionPrice;
         operationResult.finalPrice = actualPrice;
@@ -57,7 +67,8 @@ public class StockContext {
         } else {
             operationResult.result = "loss";
         }
-
+        operationResult.buyDate = positionDay;
+        operationResult.sellDate = actualDate;
         operationResult.movement = ((double) actualPrice / positionPrice * 100) - 100;
         if (operationResult.movement > 0 && operationResult.result.equals("loss")) {
             throw new RuntimeException("update sell invalid operation result");
@@ -65,16 +76,6 @@ public class StockContext {
         if (operationResult.movement < 0 && operationResult.result.equals("win")) {
             throw new RuntimeException("update sell invalid operation result");
         }
-        positionPrice = null;
-
-
-        operationResult.buyDate = positionDay;
-        positionDay = null;
-
-        operationResult.sellDate = actualDate;
         operationResults.add(operationResult);
-
-        stopPrice = 0d;
-        profitTargetPrice = 0d;
     }
 }

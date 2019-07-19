@@ -14,6 +14,9 @@ public class CrossMovingAverageBuyStrategy implements BuyStrategy {
     }
 
     public boolean shouldBuy(StockContext stockContext) {
+        if (!hasData(stockContext)) {
+            return false;
+        }
         if (stockContext.positionPrice != null) {
             return false;
         }

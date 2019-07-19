@@ -4,6 +4,7 @@ import api.model.DataStock;
 import api.model.Metric;
 import api.model.OperationResult;
 import api.model.strategies.CrossMovingAverageBuyStrategy;
+import api.model.strategies.MovingAverageBuyStrategy;
 import api.model.strategies.Strategy;
 import api.model.strategies.TrailingStopSellStrategy;
 import api.services.StockService;
@@ -29,7 +30,9 @@ public class DefaultController {
     public static Object getOperationResults(Request request, Response response) throws IOException, ParseException {
         Integer slow = Integer.valueOf(request.queryParams("slow"));
         Integer fast = Integer.valueOf(request.queryParams("fast"));
-        Strategy strategy = new Strategy(new CrossMovingAverageBuyStrategy(slow, fast), new TrailingStopSellStrategy(4, 10, 5));
+        //Strategy strategy = new Strategy(new CrossMovingAverageBuyStrategy(slow, fast), new TrailingStopSellStrategy(8, 15, 8));
+        Strategy strategy = new Strategy(new MovingAverageBuyStrategy(slow), new TrailingStopSellStrategy(8, 15, 10));
+
         List<OperationResult> stocks = stockService.getOperationResults(strategy);
         return gson.toJson(stocks);
     }
@@ -37,7 +40,8 @@ public class DefaultController {
     public static Object getMetrics(Request request, Response response) throws IOException, ParseException {
         Integer slow = Integer.valueOf(request.queryParams("slow"));
         Integer fast = Integer.valueOf(request.queryParams("fast"));
-        Strategy strategy = new Strategy(new CrossMovingAverageBuyStrategy(slow, fast), new TrailingStopSellStrategy(4, 10, 5));
+        //Strategy strategy = new Strategy(new CrossMovingAverageBuyStrategy(slow, fast), new TrailingStopSellStrategy(8, 15, 8));
+        Strategy strategy = new Strategy(new MovingAverageBuyStrategy(slow), new TrailingStopSellStrategy(8, 15, 10));
         Metric metric = stockService.getMetrics(strategy);
         return gson.toJson(metric);
     }

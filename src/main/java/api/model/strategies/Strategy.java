@@ -17,17 +17,17 @@ public class Strategy {
 
         Operation operation = Operation.SKIP;
 
-        if (!buyStrategy.hasData(stockContext)) {
-            return operation;
-        }
+        //if (!buyStrategy.hasData(stockContext)) {
+        //    return operation;
+        //}
 
         if (buyStrategy.shouldBuy(stockContext)) {
             operation = Operation.BUY;
         }
 
-        if (!sellStrategy.hasData(stockContext)) {
-            return operation;
-        }
+        //if (!sellStrategy.hasData(stockContext)) {
+        //    return operation;
+        //}
 
         if (sellStrategy.shouldSell(stockContext)) {
             if (operation.equals(Operation.BUY)) {

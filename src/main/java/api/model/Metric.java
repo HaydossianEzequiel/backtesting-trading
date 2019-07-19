@@ -7,6 +7,7 @@ public class Metric {
     public Integer totalOperations;
     public OperationResult bestMovement;
     public OperationResult worstMovement;
+    public Double globalResult;
 
     public Metric() { }
 }

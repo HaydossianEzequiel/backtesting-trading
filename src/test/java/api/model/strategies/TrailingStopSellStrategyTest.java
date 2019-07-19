@@ -75,5 +75,27 @@ public class TrailingStopSellStrategyTest {
 
     }
 
+    @Test
+    public void testUpdateStopPrice() {
+        TrailingStopSellStrategy strategy = new TrailingStopSellStrategy(3, 10, 5);
+        StockContext stockContext = new StockContext(null, new ArrayList<>());
+        stockContext.profitTargetPrice = 11d;
+        stockContext.stopPrice = 10d;
+        strategy.updateStopPrice(stockContext);
+        Assert.assertTrue(stockContext.stopPrice.floatValue() == 10.5f);
+
+    }
+
+    @Test
+    public void testUpdateStopPrice_whenUpsideIsToBigger() {
+        TrailingStopSellStrategy strategy = new TrailingStopSellStrategy(3, 10, 5);
+        StockContext stockContext = new StockContext(null, new ArrayList<>());
+        stockContext.profitTargetPrice = 90d;
+        stockContext.stopPrice = 10d;
+        strategy.updateStopPrice(stockContext);
+        Assert.assertTrue(stockContext.stopPrice.floatValue() == 54f);
+
+    }
+
 
 }
