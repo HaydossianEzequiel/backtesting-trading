@@ -1,16 +1,11 @@
 package api.services;
 
 import api.model.*;
-import api.model.source.InvestingSource;
 import api.model.source.XSource;
 import api.model.strategies.CrossMovingAverageBuyStrategy;
 import api.model.strategies.CrossMovingAverageSellStrategy;
 import api.model.strategies.MovingAverageBuyStrategy;
 import api.model.strategies.Strategy;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -92,17 +87,25 @@ public class StockService {
     }
 
     private StockContext run(Strategy strategy) throws IOException, ParseException {
-        String stockName = "M";
+        String macy = "M";
+        String generalElectric = "GE";
+        List<String> stocks = new ArrayList<>();
+        stocks.add(macy);
+        stocks.add(generalElectric);
 
-        StockContext stockContext = new StockContext(stockName, new XSource().getHistoricalData(stockName));
 
-        for (int day = 0; day < stockContext.dataStocks.size(); day++) {
-            runDay(stockContext, day, strategy);
+        Folder folder = new Folder();
+        stocks.forEach( stock -> {
+            folder.stockContexts.add(new StockContext(stock, new XSource().getHistoricalData(stock)));
+        });
+
+        for (int day = 0; day < folder.stockContexts.get(0).dataStocks.size(); day++) {
+            runDay(folder.stockContexts.get(0), day, strategy);
         }
 
-        closeAllPositions(stockContext, stockContext.dataStocks.size() - 1);
+        closeAllPositions(folder.stockContexts.get(0), folder.stockContexts.get(0).dataStocks.size() - 1);
 
-        return stockContext;
+        return folder.stockContexts.get(0);
     }
 
     private void closeAllPositions(StockContext stockContext, Integer finalDay) throws ParseException {

@@ -7,27 +7,33 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class XSource {
 
-    public List<DataStock> getHistoricalData(String stockName) throws IOException {
-        String fullName = new File("").getAbsolutePath() + "/src/main/java/database/" + stockName + ".csv";
-        BufferedReader br = new BufferedReader(new FileReader(fullName));
-        String line = null;
-        List<DataStock> dataStocks = new ArrayList<>();
+    public List<DataStock> getHistoricalData(String stockName) {
+        try{
+            String fullName = new File("").getAbsolutePath() + "/src/main/java/database/" + stockName + ".csv";
+            BufferedReader br = new BufferedReader(new FileReader(fullName));
+            String line = null;
+            List<DataStock> dataStocks = new ArrayList<>();
 
-        while ((line = br.readLine()) != null) {
-            String str[] = line.split(", ");
-            if (!str[0].equals("Date")) {
-                String date = str[0].replace(".", ",");
-                String close = str[1].replace(".", ",");
-                dataStocks.add(new DataStock(date, close));
+            while ((line = br.readLine()) != null) {
+                String str[] = line.split(", ");
+                if (!str[0].equals("Date")) {
+                    String date = str[0].replace(".", ",");
+                    String close = str[1].replace(".", ",");
+                    dataStocks.add(new DataStock(date, close));
+                }
+
             }
-
+            return dataStocks;
+        } catch(IOException e) {
+            throw new RuntimeException(e);
         }
-        return dataStocks;
-    }
 
+    }
 
 }

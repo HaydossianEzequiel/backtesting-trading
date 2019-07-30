@@ -11,7 +11,7 @@ import java.util.List;
 
 public class InvestingSource {
 
-    public List<DataStock> getHistoricalData(String stockName) throws IOException {
+    public List<DataStock> getHistoricalData(List<String> stockName) throws IOException {
         String fullName = new File("").getAbsolutePath() + "/src/main/java/database/" + stockName + ".csv";
         BufferedReader br = new BufferedReader(new FileReader(fullName));
         String line = null;
