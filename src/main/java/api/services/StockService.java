@@ -1,6 +1,8 @@
 package api.services;
 
 import api.model.*;
+import api.model.source.InvestingSource;
+import api.model.source.XSource;
 import api.model.strategies.CrossMovingAverageBuyStrategy;
 import api.model.strategies.CrossMovingAverageSellStrategy;
 import api.model.strategies.MovingAverageBuyStrategy;
@@ -90,9 +92,9 @@ public class StockService {
     }
 
     private StockContext run(Strategy strategy) throws IOException, ParseException {
-        String stockName = "ggal";
+        String stockName = "M";
 
-        StockContext stockContext = new StockContext(stockName, getHistoricalData(stockName));
+        StockContext stockContext = new StockContext(stockName, new XSource().getHistoricalData(stockName));
 
         for (int day = 0; day < stockContext.dataStocks.size(); day++) {
             runDay(stockContext, day, strategy);
@@ -154,18 +156,6 @@ public class StockService {
         }
     }
 
-    private List<DataStock> getHistoricalData(String stockName) throws IOException {
-        String fullName = new File("").getAbsolutePath() + "/src/main/java/database/" + stockName + ".csv";
-        BufferedReader br = new BufferedReader(new FileReader(fullName));
-        String line = null;
-        List<DataStock> dataStocks = new ArrayList<>();
-
-        while ((line = br.readLine()) != null) {
-            String str[] = line.split("@");
-            dataStocks.add(new DataStock(str[0], str[1]));
-        }
-        return dataStocks;
-    }
 
 
 }
