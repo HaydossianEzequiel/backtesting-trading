@@ -1,11 +1,11 @@
 package api.services;
 
 import api.model.*;
-import api.model.source.XSource;
 import api.model.strategies.CrossMovingAverageBuyStrategy;
 import api.model.strategies.CrossMovingAverageSellStrategy;
 import api.model.strategies.MovingAverageBuyStrategy;
 import api.model.strategies.Strategy;
+
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -18,8 +18,10 @@ import java.util.stream.Collectors;
 public class StockService {
 
     public List<OperationResult> getOperationResults(Strategy strategy) throws IOException, ParseException {
-        StockContext stockContext = run(strategy);
-        return stockContext.operationResults;
+        Portfolio portfolio = run(strategy);
+        List<OperationResult> operationResults = new ArrayList<>();
+        portfolio.stockContexts.forEach(it -> operationResults.addAll(it.operationResults));
+        return operationResults;
     }
 
     public List<Metric> getBestMovingAverageMetrics() throws IOException, ParseException {
@@ -80,13 +82,14 @@ public class StockService {
 
     }
 
-    public List<DataStock> getStocks() throws IOException, ParseException {
+    public List<DataStock> getStocks() throws ParseException {
         Strategy strategy = new Strategy(new CrossMovingAverageBuyStrategy(20, 5), new CrossMovingAverageSellStrategy(20, 5));
-        StockContext stockContext = run(strategy);
-        return stockContext.dataStocks;
+        Portfolio portfolio = run(strategy);
+        return portfolio.stockContexts.get(0).dataStocks;
+
     }
 
-    private StockContext run(Strategy strategy) throws IOException, ParseException {
+    private Portfolio run(Strategy strategy) throws ParseException {
         String macy = "M";
         String generalElectric = "GE";
         List<String> stocks = new ArrayList<>();
@@ -94,23 +97,19 @@ public class StockService {
         stocks.add(generalElectric);
 
 
-        Portfolio portfolio = new Portfolio();
-        stocks.forEach( stock -> {
-            portfolio.stockContexts.add(new StockContext(stock, new XSource().getHistoricalData(stock)));
-        });
-
-        for (int day = 0; day < portfolio.stockContexts.get(0).dataStocks.size(); day++) {
-            runDay(portfolio.stockContexts.get(0), day, strategy);
+        Portfolio portfolio = new Portfolio(stocks);
+        int finalDay = portfolio.stockContexts.get(0).dataStocks.size() - 1;
+        for (int day = 0; day <= finalDay; day++) {
+            for (int i = 0; i < stocks.size(); ++i) {
+                runDay(portfolio.stockContexts.get(i), day, strategy);
+            }
         }
 
-        closeAllPositions(portfolio.stockContexts.get(0), portfolio.stockContexts.get(0).dataStocks.size() - 1);
+        portfolio.closeAllPositions(finalDay);
 
-        return portfolio.stockContexts.get(0);
+        return portfolio;
     }
 
-    private void closeAllPositions(StockContext stockContext, Integer finalDay) throws ParseException {
-        stockContext.update(Operation.SELL, DecimalFormat.getNumberInstance().parse(stockContext.dataStocks.get(finalDay).close).doubleValue());
-    }
 
     private void runDay(StockContext stockContext, int day, Strategy strategy) throws ParseException {
 
@@ -158,7 +157,6 @@ public class StockService {
             stockContext.lastPricesMovingAverage.get(average).add(DecimalFormat.getNumberInstance().parse(actualDataStock.close).doubleValue());
         }
     }
-
 
 
 }

@@ -1,6 +1,7 @@
 package api.model;
 
 public class OperationResult {
+    public String ticker;
     public String result;
     public String buyDate;
     public String sellDate;

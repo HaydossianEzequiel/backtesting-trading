@@ -60,6 +60,7 @@ public class StockContext {
 
     private void updateOperationResult(Double actualPrice) {
         OperationResult operationResult = new OperationResult();
+        operationResult.ticker = this.stockName;
         operationResult.initialPrice = positionPrice;
         operationResult.finalPrice = actualPrice;
         if (positionPrice < actualPrice) {
