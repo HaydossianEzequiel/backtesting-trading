@@ -94,18 +94,18 @@ public class StockService {
         stocks.add(generalElectric);
 
 
-        Folder folder = new Folder();
+        Portfolio portfolio = new Portfolio();
         stocks.forEach( stock -> {
-            folder.stockContexts.add(new StockContext(stock, new XSource().getHistoricalData(stock)));
+            portfolio.stockContexts.add(new StockContext(stock, new XSource().getHistoricalData(stock)));
         });
 
-        for (int day = 0; day < folder.stockContexts.get(0).dataStocks.size(); day++) {
-            runDay(folder.stockContexts.get(0), day, strategy);
+        for (int day = 0; day < portfolio.stockContexts.get(0).dataStocks.size(); day++) {
+            runDay(portfolio.stockContexts.get(0), day, strategy);
         }
 
-        closeAllPositions(folder.stockContexts.get(0), folder.stockContexts.get(0).dataStocks.size() - 1);
+        closeAllPositions(portfolio.stockContexts.get(0), portfolio.stockContexts.get(0).dataStocks.size() - 1);
 
-        return folder.stockContexts.get(0);
+        return portfolio.stockContexts.get(0);
     }
 
     private void closeAllPositions(StockContext stockContext, Integer finalDay) throws ParseException {
