@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 public class StockService {
 
-    public List<OperationResult> getOperationResults(Strategy strategy) throws IOException, ParseException {
+    public List<OperationResult> getOperationResults(Strategy strategy) throws ParseException {
         Portfolio portfolio = run(strategy);
         List<OperationResult> operationResults = new ArrayList<>();
         portfolio.stockContexts.forEach(it -> operationResults.addAll(it.operationResults));
@@ -55,7 +55,7 @@ public class StockService {
         return metrics;
     }
 
-    public Metric getMetrics(Strategy strategy) throws IOException, ParseException {
+    public Metric getMetrics(Strategy strategy) throws ParseException {
         List<OperationResult> operationResults = getOperationResults(strategy);
 
         Metric metric = new Metric();
@@ -92,9 +92,11 @@ public class StockService {
     private Portfolio run(Strategy strategy) throws ParseException {
         String macy = "M";
         String generalElectric = "GE";
+        String MMM = "MMM";
         List<String> stocks = new ArrayList<>();
-        stocks.add(macy);
-        stocks.add(generalElectric);
+        //stocks.add(macy);
+        //stocks.add(generalElectric);
+        stocks.add(MMM);
 
 
         Portfolio portfolio = new Portfolio(stocks);
