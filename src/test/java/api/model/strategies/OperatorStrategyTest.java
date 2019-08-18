@@ -112,4 +112,64 @@ public class OperatorStrategyTest {
     }
 
 
+    @Test
+    public void testGetOperation_OrStrategy_returnBuy() {
+        BuyStrategy left = new CrossMovingAverageBuyStrategy(20, 5);
+        BuyStrategy right = new CrossMovingAverageBuyStrategy(20, 5);
+
+        Strategy strategy = new Strategy(new OrBuyStrategy(left, right), new CrossMovingAverageSellStrategy(20, 5));
+        StockContext stockContext = new StockContext("ggal", new ArrayList<>());
+        stockContext.movingAverage.put(5, 22d);
+        stockContext.movingAverage.put(20, 21d);
+
+        Operation operation = strategy.getOperation(stockContext);
+        Assert.assertEquals(Operation.BUY, operation);
+    }
+
+    @Test
+    public void testGetOperation_OrStrategy_returnBuy_RightNull() {
+        BuyStrategy left = new CrossMovingAverageBuyStrategy(20, 5);
+
+        Strategy strategy = new Strategy(new OrBuyStrategy(left, null), new CrossMovingAverageSellStrategy(20, 5));
+        StockContext stockContext = new StockContext("ggal", new ArrayList<>());
+        stockContext.movingAverage.put(5, 22d);
+        stockContext.movingAverage.put(20, 21d);
+
+        Operation operation = strategy.getOperation(stockContext);
+        Assert.assertEquals(Operation.BUY, operation);
+    }
+
+    @Test
+    public void testGetOperation_OrStrategy_returnSell() {
+
+        SellStrategy left = new CrossMovingAverageSellStrategy(20, 5);
+        SellStrategy right = new CrossMovingAverageSellStrategy(100, 5);
+
+        Strategy strategy = new Strategy(new CrossMovingAverageBuyStrategy(20, 5), new OrSellStrategy(left, right));
+        StockContext stockContext = new StockContext("ggal", new ArrayList<>());
+        stockContext.movingAverage.put(5, 20d);
+        stockContext.movingAverage.put(20, 21d);
+        stockContext.positionPrice = 50d;
+
+        Operation operation = strategy.getOperation(stockContext);
+        Assert.assertEquals(Operation.SELL, operation);
+    }
+
+    @Test
+    public void testGetOperation_OrStrategy_returnSkip() {
+
+        SellStrategy left = new CrossMovingAverageSellStrategy(20, 5);
+        SellStrategy right = new CrossMovingAverageSellStrategy(20, 5);
+
+        Strategy strategy = new Strategy(new CrossMovingAverageBuyStrategy(20, 5), new OrSellStrategy(left, right));
+        StockContext stockContext = new StockContext("ggal", new ArrayList<>());
+        stockContext.movingAverage.put(5, 22d);
+        stockContext.movingAverage.put(20, 21d);
+        stockContext.positionPrice = 50d;
+
+        Operation operation = strategy.getOperation(stockContext);
+        Assert.assertEquals(Operation.SKIP, operation);
+    }
+
+
 }
