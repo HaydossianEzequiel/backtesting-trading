@@ -2,7 +2,7 @@ package api.model.strategies;
 
 import api.model.StockContext;
 
-interface SellStrategy {
+public interface SellStrategy {
 
     boolean shouldSell(StockContext stockContext);
 

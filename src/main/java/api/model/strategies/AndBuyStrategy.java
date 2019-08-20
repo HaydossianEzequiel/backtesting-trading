@@ -23,6 +23,6 @@ public class AndBuyStrategy implements BuyStrategy {
 
     @Override
     public boolean hasData(StockContext stockContext) {
-        return left.hasData(stockContext) && right != null && right.hasData(stockContext);
+        return left.hasData(stockContext) && (right == null || right.hasData(stockContext));
     }
 }

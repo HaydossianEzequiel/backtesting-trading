@@ -30,8 +30,8 @@ public class DefaultController {
     public static Object getOperationResults(Request request, Response response) throws IOException, ParseException {
         Integer slow = Integer.valueOf(request.queryParams("slow"));
         Integer fast = Integer.valueOf(request.queryParams("fast"));
-        //Strategy strategy = new Strategy(new CrossMovingAverageBuyStrategy(slow, fast), new TrailingStopSellStrategy(8, 15, 8));
-        Strategy strategy = new Strategy(new MovingAverageBuyStrategy(slow), new TrailingStopSellStrategy(8, 15, 10));
+        Strategy strategy = new Strategy(new CrossMovingAverageBuyStrategy(slow, fast), new TrailingStopSellStrategy(8, 15, 8));
+        //Strategy strategy = new Strategy(new MovingAverageBuyStrategy(slow), new TrailingStopSellStrategy(8, 15, 10));
 
         List<OperationResult> stocks = stockService.getOperationResults(strategy);
         return gson.toJson(stocks);
@@ -40,8 +40,8 @@ public class DefaultController {
     public static Object getMetrics(Request request, Response response) throws IOException, ParseException {
         Integer slow = Integer.valueOf(request.queryParams("slow"));
         Integer fast = Integer.valueOf(request.queryParams("fast"));
-        //Strategy strategy = new Strategy(new CrossMovingAverageBuyStrategy(slow, fast), new TrailingStopSellStrategy(8, 15, 8));
-        Strategy strategy = new Strategy(new MovingAverageBuyStrategy(slow), new TrailingStopSellStrategy(8, 15, 10));
+        Strategy strategy = new Strategy(new CrossMovingAverageBuyStrategy(slow, fast), new TrailingStopSellStrategy(8, 15, 8));
+        //Strategy strategy = new Strategy(new MovingAverageBuyStrategy(slow), new TrailingStopSellStrategy(8, 15, 10));
         Metric metric = stockService.getMetrics(strategy);
         return gson.toJson(metric);
     }

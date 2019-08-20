@@ -1,10 +1,7 @@
 package api.services;
 
 import api.model.*;
-import api.model.strategies.CrossMovingAverageBuyStrategy;
-import api.model.strategies.CrossMovingAverageSellStrategy;
-import api.model.strategies.MovingAverageBuyStrategy;
-import api.model.strategies.Strategy;
+import api.model.strategies.*;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -96,7 +93,7 @@ public class StockService {
         List<String> stocks = new ArrayList<>();
         //stocks.add(macy);
         //stocks.add(generalElectric);
-        stocks.add(MMM);
+        stocks.add(generalElectric);
 
 
         Portfolio portfolio = new Portfolio(stocks);
@@ -135,6 +132,10 @@ public class StockService {
         }
 
         if (strategy.buyStrategy instanceof MovingAverageBuyStrategy) {
+            updateMovingAverage(stockContext, ((MovingAverageBuyStrategy) strategy.buyStrategy).average, actualDataStock);
+        }
+
+        if (strategy.buyStrategy instanceof AndBuyStrategy) {
             updateMovingAverage(stockContext, ((MovingAverageBuyStrategy) strategy.buyStrategy).average, actualDataStock);
         }
 

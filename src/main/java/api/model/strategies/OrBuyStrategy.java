@@ -18,11 +18,11 @@ public class OrBuyStrategy implements BuyStrategy {
     }
 
     private boolean rightShouldBuy(StockContext stockContext) {
-        return right == null || right.shouldBuy(stockContext);
+        return right != null && right.shouldBuy(stockContext);
     }
 
     @Override
     public boolean hasData(StockContext stockContext) {
-        return left.hasData(stockContext) && right != null && right.hasData(stockContext);
+        return left.hasData(stockContext) && (right == null || right.hasData(stockContext));
     }
 }

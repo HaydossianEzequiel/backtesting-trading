@@ -19,11 +19,11 @@ public class OrSellStrategy implements SellStrategy {
     }
 
     private boolean rightShouldSell(StockContext stockContext) {
-        return right == null || right.shouldSell(stockContext);
+        return right != null && right.shouldSell(stockContext);
     }
 
     @Override
     public boolean hasData(StockContext stockContext) {
-        return left.hasData(stockContext) && right != null && right.hasData(stockContext);
+        return left.hasData(stockContext) && (right == null || right.hasData(stockContext));
     }
 }

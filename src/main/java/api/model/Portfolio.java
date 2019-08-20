@@ -27,7 +27,9 @@ public class Portfolio {
     public void closeAllPositions(int finalDay) {
         stockContexts.forEach( it -> {
             try {
-                it.update(Operation.SELL, DecimalFormat.getNumberInstance().parse(it.dataStocks.get(finalDay).close).doubleValue());
+                if(it.positionPrice != null){ //validar
+                    it.update(Operation.SELL, DecimalFormat.getNumberInstance().parse(it.dataStocks.get(finalDay).close).doubleValue());
+                }
             } catch (ParseException e) {
                 e.printStackTrace();
             }
