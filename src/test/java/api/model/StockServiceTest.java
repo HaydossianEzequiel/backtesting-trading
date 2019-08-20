@@ -13,7 +13,7 @@ import java.util.List;
 public class StockServiceTest {
 
     @Test
-    public void testUpdateMovingAverage_sixData() throws ParseException {
+    public void testUpdateMovingAverage_sixData() {
         StockService stockService = new StockService();
         StockContext stockContext = new StockContext("ggal", new ArrayList<>());
         DataStock dataStock = new DataStock("01-04-2000", "10");
@@ -38,7 +38,7 @@ public class StockServiceTest {
     }
 
     @Test
-    public void testUpdateMovingAverage_nullWhenFiveData() throws ParseException {
+    public void testUpdateMovingAverage_nullWhenFiveData() {
         StockService stockService = new StockService();
         StockContext stockContext = new StockContext("ggal", new ArrayList<>());
         DataStock dataStock = new DataStock("01-04-2000", "10");
@@ -60,7 +60,7 @@ public class StockServiceTest {
     }
     /*
     @Test
-    public void testGetOperationResult_MMM_Cross20_5_trailingStop() throws ParseException {
+    public void testGetOperationResult_MMM_Cross20_5_trailingStop() {
         StockService stockService = new StockService();
 
         Strategy strategy = new Strategy(new CrossMovingAverageBuyStrategy(20, 5), new TrailingStopSellStrategy(8, 15, 8));
@@ -88,7 +88,32 @@ public class StockServiceTest {
     @Test
     public void testGetOperationResult_GeneralElectric_Cross20_5_trailingStop() throws ParseException {
         StockService stockService = new StockService();
-        AndBuyStrategy buyStrategy = new AndBuyStrategy(new CrossMovingAverageBuyStrategy(20, 5), new CrossMovingAverageBuyStrategy(20, 5));
+
+        Strategy strategy = new Strategy(new CrossMovingAverageBuyStrategy(20, 5), new TrailingStopSellStrategy(8, 15, 8));
+        List<OperationResult> operationResults = stockService.getOperationResults(strategy);
+
+        Assert.assertEquals(25, operationResults.size());
+        Assert.assertEquals("GE", operationResults.get(0).ticker);
+        Assert.assertEquals("10/04/00", operationResults.get(0).buyDate);
+        Assert.assertEquals("-8.704855840844488", operationResults.get(0).movement.toString());
+        Assert.assertEquals("11/08/00", operationResults.get(1).buyDate);
+        Assert.assertEquals("-8.770073954429208", operationResults.get(1).movement.toString());
+        Assert.assertEquals("12/07/00", operationResults.get(2).buyDate);
+        Assert.assertEquals("-8.588213408007206", operationResults.get(2).movement.toString());
+        Assert.assertEquals("01/22/01", operationResults.get(3).buyDate);
+        Assert.assertEquals("-8.26677201073268", operationResults.get(3).movement.toString());
+        Assert.assertEquals("04/05/01", operationResults.get(4).buyDate);
+        Assert.assertEquals("-1.0976547335408782", operationResults.get(4).movement.toString());
+        Assert.assertEquals("12/24/18", operationResults.get(24).buyDate);
+        Assert.assertEquals("51.18472238594836", operationResults.get(24).movement.toString());
+
+
+    }
+
+    @Test
+    public void testGetOperationResult_GeneralElectric_Cross20_5_trailingStop_AndBuy() throws ParseException {
+        StockService stockService = new StockService();
+        AndBuyStrategy buyStrategy = new AndBuyStrategy(new CrossMovingAverageBuyStrategy(20, 5), null);
         Strategy strategy = new Strategy(buyStrategy, new TrailingStopSellStrategy(8, 15, 8));
         List<OperationResult> operationResults = stockService.getOperationResults(strategy);
 

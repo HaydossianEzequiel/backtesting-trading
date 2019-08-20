@@ -125,40 +125,34 @@ public class StockService {
         DataStock actualDataStock = dataStocks.get(i);
         stockContext.actualDate = actualDataStock.date;
         stockContext.actualPrice = DecimalFormat.getNumberInstance().parse(actualDataStock.close).doubleValue();
-        //horrible el casteo
-        if (strategy.buyStrategy instanceof CrossMovingAverageBuyStrategy) {
-            updateMovingAverage(stockContext, ((CrossMovingAverageBuyStrategy) strategy.buyStrategy).fast, actualDataStock);
-            updateMovingAverage(stockContext, ((CrossMovingAverageBuyStrategy) strategy.buyStrategy).slow, actualDataStock);
-        }
 
-        if (strategy.buyStrategy instanceof MovingAverageBuyStrategy) {
-            updateMovingAverage(stockContext, ((MovingAverageBuyStrategy) strategy.buyStrategy).average, actualDataStock);
-        }
-
-        if (strategy.buyStrategy instanceof AndBuyStrategy) {
-            updateMovingAverage(stockContext, ((MovingAverageBuyStrategy) strategy.buyStrategy).average, actualDataStock);
-        }
+        strategy.buyStrategy.updateData(this, stockContext, actualDataStock);
 
 
     }
 
 
-    public void updateMovingAverage(StockContext stockContext, Integer average, DataStock actualDataStock) throws ParseException {
-        if (!stockContext.lastPricesMovingAverage.containsKey(average)) {
-            stockContext.lastPricesMovingAverage.put(average, new ArrayList<>());
+    public void updateMovingAverage(StockContext stockContext, Integer average, DataStock actualDataStock) {
+        try{
+            if (!stockContext.lastPricesMovingAverage.containsKey(average)) {
+                stockContext.lastPricesMovingAverage.put(average, new ArrayList<>());
+            }
+
+            if (stockContext.lastPricesMovingAverage.get(average).size() >= average) {
+                stockContext.lastPricesMovingAverage.get(average).remove(0);
+                stockContext.lastPricesMovingAverage.get(average).add(DecimalFormat.getNumberInstance().parse(actualDataStock.close).doubleValue());
+
+                stockContext.movingAverage.put(average, stockContext.lastPricesMovingAverage.get(average).stream().mapToDouble(a -> a).average().getAsDouble());
+                actualDataStock.movingAverage.put(average, stockContext.movingAverage.get(average));
+
+
+            } else {
+                stockContext.lastPricesMovingAverage.get(average).add(DecimalFormat.getNumberInstance().parse(actualDataStock.close).doubleValue());
+            }
+        } catch(ParseException e){
+            throw new RuntimeException(e);
         }
 
-        if (stockContext.lastPricesMovingAverage.get(average).size() >= average) {
-            stockContext.lastPricesMovingAverage.get(average).remove(0);
-            stockContext.lastPricesMovingAverage.get(average).add(DecimalFormat.getNumberInstance().parse(actualDataStock.close).doubleValue());
-
-            stockContext.movingAverage.put(average, stockContext.lastPricesMovingAverage.get(average).stream().mapToDouble(a -> a).average().getAsDouble());
-            actualDataStock.movingAverage.put(average, stockContext.movingAverage.get(average));
-
-
-        } else {
-            stockContext.lastPricesMovingAverage.get(average).add(DecimalFormat.getNumberInstance().parse(actualDataStock.close).doubleValue());
-        }
     }
 
 

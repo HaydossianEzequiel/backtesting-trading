@@ -1,6 +1,8 @@
 package api.model.strategies;
 
+import api.model.DataStock;
 import api.model.StockContext;
+import api.services.StockService;
 
 public class CrossMovingAverageBuyStrategy implements BuyStrategy {
 
@@ -26,6 +28,12 @@ public class CrossMovingAverageBuyStrategy implements BuyStrategy {
     @Override
     public boolean hasData(StockContext stockContext) {
         return stockContext.movingAverage.containsKey(fast) && stockContext.movingAverage.containsKey(slow);
+    }
+
+    @Override
+    public void updateData(StockService stockService, StockContext stockContext, DataStock actualDataStock) {
+        stockService.updateMovingAverage(stockContext, fast, actualDataStock);
+        stockService.updateMovingAverage(stockContext,slow, actualDataStock);
     }
 
     @Override
