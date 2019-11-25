@@ -9,7 +9,7 @@ public class FrontendSource {
 
     public String get() {
         try{
-            String fullName = new File("").getAbsolutePath() + "/src/main/java/frontend/" + "ejemplo" + ".html";
+            String fullName = new File("").getAbsolutePath() + "/src/main/java/frontend/" + "ejemplo-bk" + ".html";
             BufferedReader br = new BufferedReader(new FileReader(fullName));
             String line = null;
             String page = "";

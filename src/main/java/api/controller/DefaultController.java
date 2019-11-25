@@ -15,6 +15,7 @@ import spark.Response;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class DefaultController {
@@ -24,7 +25,19 @@ public class DefaultController {
 
     public static Object getFrontend(Request request, Response response) throws IOException, ParseException {
 
+        List<DataStock> stocks = stockService.getStocks();
+        List<String> data = new ArrayList();
+        data.add('"' + stocks.get(0).date + '"');
+        data.add('"' + stocks.get(1).date + '"');
+        data.add('"' + stocks.get(2).date + '"');
+        data.add('"' + stocks.get(3).date + '"');
+
+
+
         String html = getHtml();
+        html = html.replace("fechas", data.toString());
+        html = html.replace("firstDataSet", "[1,2,3,5]");
+        html = html.replace("secondDataSet", "[25,24,12,6]");
         return html;
     }
 
