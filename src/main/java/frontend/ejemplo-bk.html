@@ -133,10 +133,10 @@
 </div>
 
 
-<canvas id="c" width="500" height="500"></canvas>
+<canvas id="mi_chart" width="1000" height="1000"></canvas>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
 <script>
-    var ctx = document.getElementById("c").getContext("2d");
+    var ctx = document.getElementById("mi_chart").getContext("2d");
     var data = {
         labels: fechas,
         datasets: [{
@@ -159,7 +159,23 @@
             data: secondDataSet
         }]
     };
-    var MyNewChart = new Chart(ctx).Line(data);
+
+    var MyNewChart = new Chart(ctx,  {
+        type: 'bar',
+        responsive: true,
+        maintainAspectRatio: false,
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero:true
+                    }
+                }]
+            }
+        }
+
+    }).Line(data);
+
 </script>
 <div class="footer">
   <h2>Muchas gracias</h2>

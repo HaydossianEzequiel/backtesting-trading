@@ -26,18 +26,25 @@ public class DefaultController {
     public static Object getFrontend(Request request, Response response) throws IOException, ParseException {
 
         List<DataStock> stocks = stockService.getStocks();
-        List<String> data = new ArrayList();
-        data.add('"' + stocks.get(0).date + '"');
-        data.add('"' + stocks.get(1).date + '"');
-        data.add('"' + stocks.get(2).date + '"');
-        data.add('"' + stocks.get(3).date + '"');
+        List<String> fechas = new ArrayList();
+        List<String> values = new ArrayList();
 
+        for (int i = 0; i < stocks.size(); i++) {
+            DataStock item = stocks.get(i);
+            fechas.add('"' + item.date + '"');
+            String itemClose = item.close.replace(",", ".");
+            values.add(itemClose);
+            if (i > 1000) {
+                break;
+            }
+
+        }
 
 
         String html = getHtml();
-        html = html.replace("fechas", data.toString());
-        html = html.replace("firstDataSet", "[1,2,3,5]");
-        html = html.replace("secondDataSet", "[25,24,12,6]");
+        html = html.replace("fechas", fechas.toString());
+        html = html.replace("firstDataSet", values.toString());
+        html = html.replace("secondDataSet", "[]");
         return html;
     }
 
