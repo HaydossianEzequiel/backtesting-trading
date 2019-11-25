@@ -132,6 +132,7 @@ public class StockServiceTest {
         Assert.assertEquals("12/24/18", operationResults.get(24).buyDate);
         Assert.assertEquals("51.18472238594836", operationResults.get(24).movement.toString());
 
+        
 
     }
 
