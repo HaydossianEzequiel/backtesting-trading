@@ -93,6 +93,7 @@ public class StockServiceTest {
         List<OperationResult> operationResults = stockService.getOperationResults(strategy);
 
         Assert.assertEquals(25, operationResults.size());
+        Assert.assertEquals(22, operationResults.stream().filter(it->it.result.equals("loss")).toArray().length);
         Assert.assertEquals("GE", operationResults.get(0).ticker);
         Assert.assertEquals("10/04/00", operationResults.get(0).buyDate);
         Assert.assertEquals("-8.704855840844488", operationResults.get(0).movement.toString());
@@ -113,11 +114,12 @@ public class StockServiceTest {
     @Test
     public void testGetOperationResult_GeneralElectric_Cross20_5_trailingStop_AndBuy() throws ParseException {
         StockService stockService = new StockService();
-        AndBuyStrategy buyStrategy = new AndBuyStrategy(new CrossMovingAverageBuyStrategy(20, 5), null);
+        AndBuyStrategy buyStrategy = new AndBuyStrategy(new CrossMovingAverageBuyStrategy(20, 5), new BasicMomentumBuyStrategy(20, 0.5d, -0.30d, 0.75d));
         Strategy strategy = new Strategy(buyStrategy, new TrailingStopSellStrategy(8, 15, 8));
         List<OperationResult> operationResults = stockService.getOperationResults(strategy);
 
-        Assert.assertEquals(25, operationResults.size());
+        Assert.assertEquals(23, operationResults.size()); //la idea es hacer que pierda menos veces
+        Assert.assertEquals(22, operationResults.stream().filter(it->it.result.equals("loss")).toArray().length);
         Assert.assertEquals("GE", operationResults.get(0).ticker);
         Assert.assertEquals("10/04/00", operationResults.get(0).buyDate);
         Assert.assertEquals("-8.704855840844488", operationResults.get(0).movement.toString());
