@@ -8,6 +8,7 @@ public class Main {
 
     public static void main(String[] args) {
         port(8080);
+        get("/frontend", DefaultController::getFrontend);
         get("/", DefaultController::getData);
         get("/result", DefaultController::getOperationResults);
         get("/metrics", DefaultController::getMetrics);
