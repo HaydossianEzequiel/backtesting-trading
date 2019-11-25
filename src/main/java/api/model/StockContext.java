@@ -11,10 +11,12 @@ public class StockContext {
 
     public String stockName;
     public Map<Integer, Double> movingAverage = new HashMap<>();
+    public Map<Integer, Double> maxLastDays = new HashMap<>();
+    public Map<Integer, Double> minLastDays = new HashMap<>();
 
     public String actualDate;
     public Double actualPrice; //El precio del dia de la fecha
-    public Map<Integer, List<Double>> lastPricesMovingAverage = new HashMap<>();
+    public Map<Integer, List<Double>> lastPrices = new HashMap<>();
 
     public List<OperationResult> operationResults = new ArrayList<>();
     public List<DataStock> dataStocks;

@@ -9,6 +9,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -134,20 +135,24 @@ public class StockService {
 
     public void updateMovingAverage(StockContext stockContext, Integer average, DataStock actualDataStock) {
         try{
-            if (!stockContext.lastPricesMovingAverage.containsKey(average)) {
-                stockContext.lastPricesMovingAverage.put(average, new ArrayList<>());
+            if (!stockContext.lastPrices.containsKey(average)) {
+                stockContext.lastPrices.put(average, new ArrayList<>());
             }
 
-            if (stockContext.lastPricesMovingAverage.get(average).size() >= average) {
-                stockContext.lastPricesMovingAverage.get(average).remove(0);
-                stockContext.lastPricesMovingAverage.get(average).add(DecimalFormat.getNumberInstance().parse(actualDataStock.close).doubleValue());
+            if (stockContext.lastPrices.get(average).size() >= average) {
+                stockContext.lastPrices.get(average).remove(0);
+                stockContext.lastPrices.get(average).add(DecimalFormat.getNumberInstance().parse(actualDataStock.close).doubleValue());
 
-                stockContext.movingAverage.put(average, stockContext.lastPricesMovingAverage.get(average).stream().mapToDouble(a -> a).average().getAsDouble());
-                actualDataStock.movingAverage.put(average, stockContext.movingAverage.get(average));
+                stockContext.movingAverage.put(average, stockContext.lastPrices.get(average).stream().mapToDouble(a -> a).average().getAsDouble());
+
+                //momentum
+                stockContext.maxLastDays.put(average, stockContext.lastPrices.get(average).stream().max(Double::compare).get());
+                stockContext.minLastDays.put(average, stockContext.lastPrices.get(average).stream().min(Double::compare).get());
+
 
 
             } else {
-                stockContext.lastPricesMovingAverage.get(average).add(DecimalFormat.getNumberInstance().parse(actualDataStock.close).doubleValue());
+                stockContext.lastPrices.get(average).add(DecimalFormat.getNumberInstance().parse(actualDataStock.close).doubleValue());
             }
         } catch(ParseException e){
             throw new RuntimeException(e);
