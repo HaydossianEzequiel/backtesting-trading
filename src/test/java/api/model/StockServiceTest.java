@@ -133,6 +133,7 @@ public class StockServiceTest {
         Assert.assertEquals("51.18472238594836", operationResults.get(24).movement.toString());
 
 
+
     }
 
 
